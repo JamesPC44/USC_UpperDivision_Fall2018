@@ -1,0 +1,75 @@
+There are two key components in the problem for binary bats that lead to a solution:
+
+1) Every bat chirps at time 0
+2) Every bat's chirping interval is unique
+
+Since every bat chirps at time 0, you can immediately tell if you have an even or odd number of bats, but this is a red
+herring. The first 1 encountered after time 0 _must_ be a single bat, since every chirping interval is unique. We can
+figure out the interval on which this bat chirps (it is just the current time) and then we remove this bat from
+consideration by incrementing a count variable and flipping every chirping bit on this interval. The next 1 we encounter
+must also indicate be a unique bat. There are two cases: this bat's chirping interval is coprime with all previous
+chirping intervals found (in which case we have found a unique bat by itself and repeat the algorithm described before)
+or this bat's chirping interval is not coprime with a previous chirping interval, which means that though this chirp
+would normally cancel out with a previous chirping interval, it displays as a 1 because we have already accounted for
+the previous chirping interval found.
+
+The implementation is O(n^2), but there is a fast way to implement the flipping operation. It is important that, when
+canceling out all subsequent chirps on a given interval, the index is incremented by the interval itself (instead of,
+say, checking at each index if that index should be canceled, which might be implemented by the very slow modulus
+operator). The bit flipping can conveniently be modeled as an XOR with 1, since
+
+1 ^ 1 = 0
+0 ^ 1 = 1
+
+XOR is a very fast operation for computers to perform, though I imagine this is not very important in gaining a
+noticeable speed boost.
+
+Python solution:
+```
+input = list(map(int, input()))
+
+idxs = []
+
+for i in range(len(input)):
+    if input[i] == 1 and i != 0:
+        idxs.append(i)
+        for j in range(i, len(input), i):
+            input[j] ^= 1
+
+print(len(idxs))
+```
+
+Rust Solution:
+```
+
+use std::io::{self, BufRead};
+
+fn main() {
+    let stdin = io::stdin();
+    let mut input: Vec<i32> = stdin
+                            .lock()
+                            .lines()
+                            .next()
+                            .unwrap()
+                            .unwrap()
+                            .chars()
+                            .map(|ch| match ch { '0' => 0, '1' => 1, _ => panic!() })
+                            .collect();
+
+    let mut idxs = vec![];
+
+    for i in 0..input.len() {
+        if input[i] == 1 && i != 0 {
+            idxs.push(i);
+            let mut j = i;
+            loop {
+                if j >= input.len() { break; }
+                input[j] ^= 1;
+                j += i;
+            }
+        }
+    }
+
+    println!("{}", idxs.len());
+}
+```
