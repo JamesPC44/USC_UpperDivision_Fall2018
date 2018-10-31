@@ -3,9 +3,10 @@ import collections
 
 str1 = input()
 str2 = input()
-dic1 = collections.Ordereddic()
-dic2 = collections.Ordereddic()
- 
+dic1 = collections.OrderedDict()
+dic2 = collections.OrderedDict()
+start = time.time()
+
 dic1['a'] = 0
 dic1['b'] = 0
 dic1['c'] = 0
@@ -78,9 +79,12 @@ for key, value in dic1.items():
         dic2[key] = dic2[key] - dic1[key]
         dic1[key] = 0
     
-    # In java this is equivalent to Collections.nCopies(number, element)
+     # In java this is equivalent to Collections.nCopies(number, element)
     stack1 = stack1 + ([key] * dic1[key])
     stack2 = stack2 + ([key] * dic2[key])
+
+# print (?stack1)
+# print (stack2)
 
 if len(stack1) == 0 and len(stack2) == 0:
     print('AC JUMBLE')
@@ -102,3 +106,5 @@ else:
         print(retval)
     else:
         print(retval)
+    
+print (time.time() - start)
